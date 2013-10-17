@@ -52,7 +52,55 @@
 <li>
 <strong>Documentation generator for the <a href="https://github.com/ymeine/oop">OOP library</a></strong>: generating documentation files from introspection of OOP elements specifications</li>
 <li>...</li>
-</ul>
+</ul><h2>
+<a name="git-project-extraction" class="anchor" href="#git-project-extraction"><span class="octicon octicon-link"></span></a>Git project extraction</h2>
+
+<p>This project is a little complex and comes from a requirement for the <a href="https://github.com/ymeine/oop">OOP project</a>. This is inspired from <a href="http://git-scm.com/docs/git-filter-branch"><code>git filter-branch</code></a>.</p>
+
+<p>However the idea is simple: the user can specify a set of files he wants to keep, from any commit, and the whole history is rewritten keeping only those files. This process would also: </p>
+
+<ul>
+<li>preserve authoring dates</li>
+<li>for each created commit put the <em>highest</em> file at the root</li>
+</ul><p>This <strong>MUST</strong> handle nicely refactoring, that is file renames (and movements of course). For that it should use the git file log feature, since these are computed things (in the Git system there is no link between two versions of a file or a content, just between commits)</p>
+
+<p>This way you can extract a sub-project with its whole own history, keeping all possible dependencies that could have been removed at some point (that's why you can specify files from older commits) - to have a consistent state at each commit.</p>
+
+<p>Also, the interface of this tool should provide a way to easily reedit commit messages while previewing the snapshot for each commit.</p>
+
+<p>For all that, plumbing commands like <a href="http://git-scm.com/docs/git-commit-tree"><code>git commit-tree</code></a> or <a href="http://git-scm.com/docs/git-rev-list"><code>git rev-list</code></a> should be enough.</p>
+
+<h3>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h3>
+
+<p>Initial state: </p>
+
+<pre><code>commit 1, 16-10-13
+    - removed 1
+        - ...
+    - removed 2
+    - folder
+        - keep 2
+    - keep 1
+
+commit 2, 17-10-13
+    - removed 1
+        - ...
+    - removed 2
+    - folder
+        - keep 2
+</code></pre>
+
+<p>After running the tool by specifying you want to keep <code>keep1</code> from commit 1 and <code>keep2</code> from commit 2, it would give: </p>
+
+<pre><code>commit 1, 16-10-13
+    - folder
+        - keep 2
+    - keep 1
+
+commit 2, 17-10-13
+    - keep 2
+</code></pre>
       </section>
     </div>
 
